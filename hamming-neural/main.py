@@ -78,29 +78,49 @@ def selection_for_decode(list21, cond):
     return appendix
 
 
+def recover(indexes, array):
+    for i in reversed(indexes):
+        del array[i]
+    return array
+
 # Нужна проверка, является ли это число ошибочным
 
 def decode(input):
     i = 0
+
+    array = list(input)
     indexes = []
     while 2**i < len(input):
-        indexes.append(list(itertools.chain(*selection_for_decode(input, 2**i))))
+        indexes.append(2**i-1)
         i += 1
 
-    decoded_from_ham = indexes
+    recovered_array = code(recover(indexes, array))
+    summary = 1
+    for i in indexes:
+        if input[i] != recovered_array[i]:
+            summary += i
+
+    if summary != 0:
+        if recovered_array[summary] == 0:
+            recovered_array[summary] = 1
+        else:
+            recovered_array[summary] = 0
+
+    recovered_array = code(recover(indexes, recovered_array))
+
+    decoded_from_ham = recovered_array
     return decoded_from_ham
 
 
 #a = 'd'
-#b = 'D'
 #a = ''.join(format(ord(x), 'b') for x in a)
 #print a
-#print ''.join(str(i) for i in code(a))
+#print code(a)#''.join(str(i) for i in code(a))
 # After running code, d = 11111001100
 #print chr(int('11111001100', 2))
 # Wrong d = 11011001100
 a = '11011001100'
-print a
+#print a
 print decode(map(int, list(a)))
 
 #print ''.join(format(ord(x), 'b') for x in b)
