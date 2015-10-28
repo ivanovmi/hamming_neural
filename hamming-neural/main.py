@@ -1,6 +1,8 @@
 #!/usr/bin/env python
 # -- coding: utf-8 --
 
+import itertools
+
 __author__ = 'michael'
 
 # Основываем на нечетности - если количество контролируемых бит, равных единице нечетно, инвертируем контрольный бит.
@@ -16,7 +18,7 @@ __author__ = 'michael'
 # +------------+-------------------+
 
 
-def selection(list21, cond):
+def selection_for_code(list21, cond):
     """
     Функция для выборки контролируемых бит, и подсчета четности/нечетности для инвертирования контрольного бита
     :param list21: Массив, хранящий в себе начальное состояние до конвертации
@@ -31,15 +33,21 @@ def selection(list21, cond):
             counter += sum(list21[i:i+cond])
         except IndexError:
             pass
+
     if counter % 2 == 1:
         flag = True
     else:
         flag = False
-    print '==========='
+
     return flag
 
 
 def code(input):
+    """
+    Функция для получения кода Хэмминга из исходной последовательности 0 и 1
+    :param input: Массив, последовательность 0 и 1 (одна буква)
+    :return: Код Хэмминга, основаный на нечетности контролируемых бит
+    """
     break_word = True
     i = 0
     indexes = []
@@ -51,32 +59,49 @@ def code(input):
             break_word = False
         i += 1
 
-    print indexes
-
     for i in indexes:
-        flag = selection(array, 2**i)
+        flag = selection_for_code(array, 2**i)
         if flag:
             array[2**i-1] = 1
-    print '\n=========================='
 
     ham_code = array
     return ham_code
 
 
-def decode():
-    pass
+def selection_for_decode(list21, cond):
+    appendix = []
+    for i in range(cond-1, len(list21), cond*2):
+        try:
+            appendix.append(list21[i:i+cond])
+        except IndexError:
+            pass
+    return appendix
 
 
-#a = 'ы'
+# Нужна проверка, является ли это число ошибочным
+
+def decode(input):
+    i = 0
+    indexes = []
+    while 2**i < len(input):
+        indexes.append(list(itertools.chain(*selection_for_decode(input, 2**i))))
+        i += 1
+
+    decoded_from_ham = indexes
+    return decoded_from_ham
+
+
+#a = 'd'
 #b = 'D'
 #a = ''.join(format(ord(x), 'b') for x in a)
 #print a
 #print ''.join(str(i) for i in code(a))
 # After running code, d = 11111001100
-print chr(int('1101000110001011', 2)) #'11111001100', 2))
+#print chr(int('11111001100', 2))
 # Wrong d = 11011001100
-#a = '11011001100'
-#print map(int, list(a))
+a = '11011001100'
+print a
+print decode(map(int, list(a)))
 
 #print ''.join(format(ord(x), 'b') for x in b)
 
