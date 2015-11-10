@@ -1,0 +1,6 @@
+numpy
+neurolab
+# scipy
+# sudo apt-get install python-scipy
+sklearn
+normalize-easy

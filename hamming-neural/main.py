@@ -112,16 +112,16 @@ def decode(input):
     return decoded_from_ham
 
 
-#a = 'd'
-#a = ''.join(format(ord(x), 'b') for x in a)
+a = 'd'
+a = ''.join(format(ord(x), 'b') for x in a)
 #print a
-#print code(a)#''.join(str(i) for i in code(a))
+print ''.join(str(i) for i in code(a))
 # After running code, d = 11111001100
-#print chr(int('11111001100', 2))
+#print chr(int('1100100', 2))
 # Wrong d = 11011001100
-a = '11011001100'
+a = '11111001100'
 #print a
-print decode(map(int, list(a)))
+print ''.join(str(i) for i in decode(map(int, list(a))))
 
 #print ''.join(format(ord(x), 'b') for x in b)
 
