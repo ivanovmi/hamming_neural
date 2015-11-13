@@ -1,11 +1,10 @@
 #!/usr/bin/env python
 # -- coding: utf-8 --
 
-import itertools
+__author__ = 'michael & ivan'
 
-__author__ = 'michael'
-
-# Основываем на нечетности - если количество контролируемых бит, равных единице нечетно, инвертируем контрольный бит.
+# Основываем на нечетности - если количество
+# контролируемых бит, равных единице нечетно, инвертируем контрольный бит.
 # Изначально записываем нули на места степени двойки
 # +------------+-------------------+
 # | variable   |   value           |
@@ -20,10 +19,12 @@ __author__ = 'michael'
 
 def selection_for_code(list21, cond):
     """
-    Функция для выборки контролируемых бит, и подсчета четности/нечетности для инвертирования контрольного бита
+    Функция для выборки контролируемых бит,
+    и подсчета четности/нечетности для инвертирования контрольного бита
     :param list21: Массив, хранящий в себе начальное состояние до конвертации
     :param cond: Параметр, определяющий начальную позицию и шаг выборки
-    :return: флаг, говорящий о необходимости конвертации. Равен True, если битов == 1 нечетное количество,
+    :return: флаг, говорящий о необходимости конвертации.
+    Равен True, если битов == 1 нечетное количество,
     и False, если битов == 1 четное количество
     """
     # Счетчик единиц в контролируемых битах
@@ -83,7 +84,6 @@ def recover(indexes, array):
         del array[i]
     return array
 
-# Нужна проверка, является ли это число ошибочным
 
 def decode(input):
     i = 0
@@ -111,17 +111,13 @@ def decode(input):
     decoded_from_ham = recovered_array
     return decoded_from_ham
 
-
-a = 'd'
-a = ''.join(format(ord(x), 'b') for x in a)
-#print a
-print ''.join(str(i) for i in code(a))
+"""
+Это модули для проверки выполнения алгоритма
+"""
+# a = 'd'
+# a = ''.join(format(ord(x), 'b') for x in a)
+# print ''.join(str(i) for i in code(a))
 # After running code, d = 11111001100
-#print chr(int('1100100', 2))
 # Wrong d = 11011001100
-a = '11111001100'
-#print a
-print ''.join(str(i) for i in decode(map(int, list(a))))
-
-#print ''.join(format(ord(x), 'b') for x in b)
-
+# a = '11111001100'
+# print ''.join(str(i) for i in decode(map(int, list(a))))

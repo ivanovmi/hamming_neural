@@ -5,10 +5,14 @@ import neurolab.net
 import neurolab.trans
 import numpy as np
 
-__author__ = 'michael'
+__author__ = 'michael & ivan'
 
+# Создаем массив размерностью 10х40 (10 строк, 40 столбцов),
+# и заполняем его единицами
+# В нем будем хранить "идеальное" множество
 target = np.ones((10, 40), dtype=np.float)
 
+# Перечисляем элементы с 0 по 9.
 target[0, :] = np.array([0, 1, 1, 1, 0,
                          1, 0, 0, 0, 1,
                          1, 0, 0, 0, 1,
@@ -101,14 +105,30 @@ target[9, :] = np.array([0, 1, 1, 1, 0,
 
 
 def train(target):
-    # Create and train network
-    neuron = neurolab.net.newhem(target, neurolab.trans.SatLinPrm(1, 0, 100), 1000)
+    """
+    Функция для создания и тренировки сети.
+    :param target: "Идеальное" множество.
+    :return: Нейронную сеть
+    """
+    neuron = neurolab.net.newhem(target,
+                                 neurolab.trans.SatLinPrm(1, 0, 100), 1000)
     neuron.sim(target)
     return neuron
 
-input = [0,1,1,1,0,1,0,0,0,1,1,0,0,0,1,1,0,0,0,1,0,1,1,1,1,0,0,0,0,1,1,0,0,0,1,0,1,1,1,0]#[[1, 1, 1, 0, 0, 1, 0, 1, 1, 0, 0, 1, 1, 1, 1]]
 
 def get_output(input, target):
+    """
+    Функция для получения результата из сети.
+    Сеть создается и обучается внутри функции.
+    P.S. Для лабораторной работы сеть пересоздается каждый раз, в дальнейшем
+    планируется вынести обучение сети, и производить его один раз во время
+    запуска программы
+    :param input: Множество, по которому
+    мы хотим получить ответ из сети. Массив.
+    :param target: "идеальное" обучающее множество.
+    В нашем случае - массив 10х40
+    :return: Возвращает массив, состоящий из 10 символов
+    """
     neuron = train(target)
     output = neuron.sim([input])
-    return output
+    return output[0]
