@@ -10,4 +10,5 @@ except ImportError:
 
 setuptools.setup(
     setup_requires=['pbr'],
+    scripts=['bin/hamming-neural'],
     pbr=True)
