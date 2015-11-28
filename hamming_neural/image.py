@@ -1,35 +1,60 @@
 #!/usr/bin/env python
 # -- coding: utf-8 --
 
+from __future__ import division
 __author__ = 'michael'
 
+import binascii
+import numpy as np
+import os
 from PIL import Image
 
-#img = Image.open('img/a.png').convert('L')
-import matplotlib.pyplot as plt
-from PIL import Image
-import matplotlib.patches as mpatches
 
-im1 = Image.open('img/a.png')
+def convert_letter_to_bitmap(image_file):
+    let_mass = []
+    im = Image.open(image_file)
+    im = im.resize((100, 100), Image.ANTIALIAS)
+    pix = im.load()
 
-# Flip the .tif file so it plots upright
-#im1 = im.transpose(Image.FLIP_TOP_BOTTOM)
+    for x in xrange(0, im.size[0]):
+        for y in xrange(0, im.size[1]):
+            if sum(pix[x, y])/3/255 >= 0.5:
+                let_mass.append(1)
+            else:
+                let_mass.append(0)
 
-# Plot the image
-plt.imshow(im1)
-ax = plt.gca()
+    return let_mass
 
-# create a grid
-ax.grid(True, color='r', linestyle='--', linewidth=2)
-# put the grid below other plot elements
-ax.set_axisbelow(True)
 
-# Draw a box
-xy = 200, 200,
-width, height = 100, 100
-ax.add_patch(mpatches.Rectangle(xy, width, height, facecolor="none",
-    edgecolor="blue", linewidth=2))
+def create_target():
+    target = np.ones((32, 10000), dtype=np.float)
+    a = 0
+    for image in sorted(os.listdir(os.path.abspath('hamming_neural/img/'))):
+        target[a, :] = convert_letter_to_bitmap(os.path.abspath('hamming_neural/img/'+image))
+        a += 1
 
-plt.draw()
+    return target
 
-plt.show()
+
+#try:
+#    # pick an image file you have in the working directory
+#    # or give the full file path ...
+#    image_file = 'py.ico'
+#    fin = open(image_file, "rb")
+#    data = fin.read()
+#    fin.close()
+#except IOError:
+#    print("Image file %s not found" % image_file)
+#    raise SystemExit
+## convert every byte of data to the corresponding 2-digit hexadecimal
+#hex_str = str(binascii.hexlify(data))
+## now create a list of 2-digit hexadecimals
+#hex_list = []
+#bin_list = []
+#for ix in range(2, len(hex_str)-1, 2):
+#    hex = hex_str[ix]+hex_str[ix+1]
+#    hex_list.append(hex)
+#    bin_list.append(bin(int(hex, 16))[2:])
+##print(bin_list)
+#bin_str = "".join(bin_list)
+#print(bin_str)

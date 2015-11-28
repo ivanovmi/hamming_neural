@@ -1,8 +1,11 @@
-#!/usr/bin/env python
+ #!/usr/bin/env python
 # -- coding: utf-8 --
 
 import re
 import sys
+from os.path import sep, expanduser, isdir, dirname
+import platform
+
 
 # Import in this case needed for setting config
 # variables before others import. If we put
@@ -26,10 +29,12 @@ import kivy.uix.popup as pu
 import kivy.uix.textinput as ti
 import kivy.uix.togglebutton as tb
 import kivy.core.window as wi
-
+import kivy.uix.filechooser as fc
+import kivy.uix.filebrowser as fb
+import kivy.uix.modalview as mv
 # Импортируем модуль, в котором создается сеть
 import neural
-
+import image
 
 class FieldRules(ti.TextInput):
 
@@ -42,6 +47,8 @@ class FieldRules(ti.TextInput):
 
 class NeuralNetworkApp(app.App):
 
+    platform = platform.system().lower()
+
     @staticmethod
     def autosize_font(perc):
         """
@@ -51,35 +58,31 @@ class NeuralNetworkApp(app.App):
         """
         return perc * wi.Window.height
 
-    def create_table(self):
-        """
-        Создает и добавляет кнопки в массиве 8х5
-        :return: ничего.
-        """
-        x = 0
-        y = 0
-        # Массив, в котором будут храниться id кнопок, чтобы в последующем
-        # можно было очищать поле
-        self.toogle_button = []
-        for i in range(0, 40):
-            if i % 5 == 0:
-                x = 0
-                y -= .05
-            else:
-                x += .05
-            self.check = tb.ToggleButton(size_hint=(.05, .05),
-                                         pos_hint={'x': .36+x, 'y': .95+y})
-            self.toogle_button.append(self.check)
-            self.grid.add_widget(self.check)
+    def create_browser(self):
+        if platform == 'win':
+            user_path = dirname(expanduser('~')) + sep + 'Documents'
+        else:
+            user_path = expanduser('~') + sep + 'Documents'
+        browser = fb.FileBrowser(select_string='Select',
+                                 favorites=[(user_path, 'Documents')])
+        browser.bind(
+                    on_success=self._fbrowser_success,
+                    on_canceled=self._fbrowser_canceled)
+        return browser
 
-    def clean_all(self):
-        """
-        Удаляет кнопки, и вызывает функцию создания таблицы заново
-        :return: ничего.
-        """
-        for button in self.toogle_button:
-            self.grid.remove_widget(button)
-        self.create_table()
+    def _fbrowser_canceled(self, instance):
+        self.view.dismiss()
+
+    def _fbrowser_success(self, instance):
+        try:
+            self.file = instance.selection[0]
+        except IndexError:
+            pass
+        else:
+            self.filename_label = label.Label(text=self.file,
+                                              pos_hint={'x': .0, 'y': .2})
+            self.grid.add_widget(self.filename_label)
+            self.view.dismiss()
 
     def calculate(self):
         """
@@ -96,16 +99,9 @@ class NeuralNetworkApp(app.App):
             # будем удалять каждый раз, как вызовем self.calculate()
             pass
 
-        # Генерируем массив длиной 40 элементов
-        input_value = []
-        for button in self.toogle_button:
-            if button.state == 'down':
-                input_value.append(1)
-            else:
-                input_value.append(0)
+        input_value = image.convert_letter_to_bitmap(self.file)
 
-        # Получаем выхлоп из нашей сети
-        output = neural.get_output(target=neural.target, input=input_value)
+        output = neural.get_output(input=input_value, neuron=self.neuron)
 
         # Считаем сколько элементов отлично от 0
         sum_value = sum(i > 0 for i in output)
@@ -121,25 +117,37 @@ class NeuralNetworkApp(app.App):
                 if output[i] > 0:
                     index = i
             self.label = label.Label(text="Cеть считает что это: {0}".
-                                     format(index),
+                                     format(neural.result_dict[index]),
                                      font_size=self.autosize_font(0.038))
         else:
             index = ', '.join(str(i)
                               for i in range(0, len(output))
                               if output[i] > 0)
             self.label = label.Label(text="Cеть считает что это: {0}".
-                                     format(index),
+                                     format(neural.result_dict[index]),
                                      font_size=self.autosize_font(0.038))
         self.grid.add_widget(self.label)
         self.popup.dismiss()
 
+    def start_browsing(self):
+        self.view = mv.ModalView(size_hint=(None, None),
+                                 size=(screen_size.get_width()/3-50, screen_size.get_height()/2-50),
+                                 auto_dismiss=False)
+        self.view.add_widget(self.create_browser())
+        self.view.open()
+
     def build(self):
+
+        self.neuron = neural.train(image.create_target())
 
         # Сетка для размещения элементов внутри окна.
         self.grid = fl.FloatLayout(size=(200, 200))
 
-        # Создаем табличку с кнопками 8х5
-        self.create_table()
+        self.browse_button = btn.Button(text='Обзор',
+                                        size_hint=(.33, .25),
+                                        font_size =self.autosize_font(0.038),
+                                        pos_hint={'x': .68, 'y': .75},
+                                        on_press=lambda f: self.start_browsing())
 
         # Пустой ярлык, куда впоследствии
         # будем писать результаты обработки от сети
@@ -171,6 +179,7 @@ class NeuralNetworkApp(app.App):
                               auto_dismiss=False)
 
         # Добавляем кнопки на форму
+        self.grid.add_widget(self.browse_button)
         self.grid.add_widget(self.calculate_button)
         self.grid.add_widget(self.clear_button)
         self.grid.add_widget(self.exit_button)
