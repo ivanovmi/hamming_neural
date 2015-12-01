@@ -3,9 +3,10 @@
 
 import re
 import sys
+import os
 from os.path import sep, expanduser, isdir, dirname
 import platform
-
+from PIL import Image
 
 # Import in this case needed for setting config
 # variables before others import. If we put
@@ -99,33 +100,52 @@ class NeuralNetworkApp(app.App):
             # будем удалять каждый раз, как вызовем self.calculate()
             pass
 
-        input_value = image.convert_letter_to_bitmap(self.file)
+        letters = []
 
-        output = neural.get_output(input=input_value, neuron=self.neuron)
+        tmp_dir = image.slice_image(self.file)
+        #cv2.imshow('norm', self.file)
+        print self.file
+        self.im = Image.open(self.file)
+        print self.file
+        self.im.show(title=self.file)
+        
+        for self.image in sorted(os.listdir(tmp_dir)):
+            input_value = image.convert_letter_to_bitmap(tmp_dir+'/'+self.image, False)
+            #print input_value
+            output = neural.get_output(input=input_value, neuron=self.neuron)
+            #print(output)
+        #    # Считаем сколько элементов отлично от 0
+            sum_value = sum(i > 0 for i in output)
+            if sum_value == 1:
+                index = None
+                for i in range(0, len(output)):
+                    if output[i] > 0:
+                        index = i
+                letters.append(neural.result_dict[index])
 
-        # Считаем сколько элементов отлично от 0
-        sum_value = sum(i > 0 for i in output)
+        self.label = \
+                label.Label(text=''.join(i for i in letters))
 
         # Формируем вывод в label
-        if sum_value == 0:
-            self.label = \
-                label.Label(text="Cеть даже понять не может, что это!",
-                            font_size=self.autosize_font(0.038))
-        elif sum_value == 1:
-            index = 'none'
-            for i in range(0, len(output)):
-                if output[i] > 0:
-                    index = i
-            self.label = label.Label(text="Cеть считает что это: {0}".
-                                     format(neural.result_dict[index]),
-                                     font_size=self.autosize_font(0.038))
-        else:
-            index = ', '.join(str(i)
-                              for i in range(0, len(output))
-                              if output[i] > 0)
-            self.label = label.Label(text="Cеть считает что это: {0}".
-                                     format(neural.result_dict[index]),
-                                     font_size=self.autosize_font(0.038))
+        #if sum_value == 0:
+        #    self.label = \
+        #        label.Label(text="Cеть даже понять не может, что это!",
+        #                    font_size=self.autosize_font(0.038))
+        #elif sum_value == 1:
+        #    index = 'none'
+        #    for i in range(0, len(output)):
+        #        if output[i] > 0:
+        #            index = i
+        #    self.label = label.Label(text="Cеть считает что это: {0}".
+        #                             format(neural.result_dict[index]),
+        #                             font_size=self.autosize_font(0.038))
+        #else:
+        #    index = ', '.join(str(i)
+        #                      for i in range(0, len(output))
+        #                      if output[i] > 0)
+        #    self.label = label.Label(text="Cеть считает что это: {0}".
+        #                             format(neural.result_dict[index]),
+        #                             font_size=self.autosize_font(0.038))
         self.grid.add_widget(self.label)
         self.popup.dismiss()
 
