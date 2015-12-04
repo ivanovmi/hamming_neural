@@ -21,7 +21,7 @@ def train(target):
     :return: Нейронную сеть
     """
     neuron = neurolab.net.newhem(target,
-                                 neurolab.trans.SatLinPrm(1, 0, 10000), 1000)
+                                 neurolab.trans.SatLinPrm(1, 0, 10000), 100000)
     neuron.sim(target)
     return neuron
 

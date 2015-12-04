@@ -104,16 +104,14 @@ class NeuralNetworkApp(app.App):
 
         tmp_dir = image.slice_image(self.file)
         #cv2.imshow('norm', self.file)
-        print self.file
         self.im = Image.open(self.file)
-        print self.file
         self.im.show(title=self.file)
-        
+
         for self.image in sorted(os.listdir(tmp_dir)):
             input_value = image.convert_letter_to_bitmap(tmp_dir+'/'+self.image, False)
             #print input_value
             output = neural.get_output(input=input_value, neuron=self.neuron)
-            #print(output)
+            print(output)
         #    # Считаем сколько элементов отлично от 0
             sum_value = sum(i > 0 for i in output)
             if sum_value == 1:
@@ -148,6 +146,13 @@ class NeuralNetworkApp(app.App):
         #                             font_size=self.autosize_font(0.038))
         self.grid.add_widget(self.label)
         self.popup.dismiss()
+
+    def clean_all(self):
+        try:
+            self.grid.remove_widget(self.label)
+            self.grid.remove_widget(self.filename_label)
+        except AttributeError:
+            pass
 
     def start_browsing(self):
         self.view = mv.ModalView(size_hint=(None, None),
