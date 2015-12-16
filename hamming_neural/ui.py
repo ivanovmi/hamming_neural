@@ -150,9 +150,9 @@ class NeuralNetworkApp(app.App):
         self.grid = fl.FloatLayout(size=(200, 200))
 
         self.browse_button = btn.Button(text='Обзор',
-                                        size_hint=(.33, .25),
+                                        size_hint=(.25, .10),
                                         font_size =self.autosize_font(0.038),
-                                        pos_hint={'x': .68, 'y': .75},
+                                        pos_hint={'x': .50, 'y': .0},
                                         on_press=lambda f: self.start_browsing())
 
         # Пустой ярлык, куда впоследствии
@@ -161,19 +161,19 @@ class NeuralNetworkApp(app.App):
 
         # Кнопки "Рассчитать", "Очистить" и "Выход"
         self.calculate_button = btn.Button(text='Рассчитать',
-                                           size_hint=(.33, .25),
+                                           size_hint=(.25, .10),
                                            font_size=self.autosize_font(0.038),
                                            pos_hint={'x': .0, 'y': .0},
                                            on_press=lambda f: self.calculate())
         self.clear_button = btn.Button(text='Очистить все',
                                        font_size=self.autosize_font(0.038),
-                                       size_hint=(.33, .25),
-                                       pos_hint={'x': .34, 'y': .0},
+                                       size_hint=(.25, .10),
+                                       pos_hint={'x': .25, 'y': .0},
                                        on_press=lambda f: self.clean_all())
         self.exit_button = btn.Button(text='Выход',
-                                      size_hint=(.33, .25),
+                                      size_hint=(.25, .10),
                                       font_size=self.autosize_font(0.038),
-                                      pos_hint={'x': .68, 'y': .0},
+                                      pos_hint={'x': .75, 'y': .0},
                                       on_press=lambda f: sys.exit())
 
         # Всплывающее окно, взывающее пользователя проявить терпение.
