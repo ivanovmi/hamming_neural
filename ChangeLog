@@ -1,6 +1,15 @@
 CHANGES
 =======
 
+* Olya Version
+* Add more test words
+* Remove some garbage
+* Fix bug with "Б", "Г", "Е"
+* Мы что-то починили
+* Оно слова распознает. Я фигею
+* ChangeLog:
+* Start work on images recognition
+* Now we standalone app
 * Add setup files and comments
 * It works! Really!!
 * IT WORKS! But with several error

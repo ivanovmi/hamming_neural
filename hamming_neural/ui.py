@@ -1,4 +1,4 @@
- #!/usr/bin/env python
+#!/usr/bin/env python
 # -- coding: utf-8 --
 
 import re
@@ -33,9 +33,12 @@ import kivy.core.window as wi
 import kivy.uix.filechooser as fc
 import kivy.uix.filebrowser as fb
 import kivy.uix.modalview as mv
+import kivy.uix.scatter as sc
+import kivy.properties as pr
 # Импортируем модуль, в котором создается сеть
 import neural
 import image
+
 
 class FieldRules(ti.TextInput):
 
@@ -143,6 +146,7 @@ class NeuralNetworkApp(app.App):
         self.view.open()
 
     def build(self):
+        
 
         self.neuron = neural.train(image.create_target())
 
@@ -152,7 +156,7 @@ class NeuralNetworkApp(app.App):
         self.browse_button = btn.Button(text='Обзор',
                                         size_hint=(.25, .10),
                                         font_size =self.autosize_font(0.038),
-                                        pos_hint={'x': .50, 'y': .0},
+                                        pos_hint={'x': .0, 'y': .20},
                                         on_press=lambda f: self.start_browsing())
 
         # Пустой ярлык, куда впоследствии
@@ -163,17 +167,17 @@ class NeuralNetworkApp(app.App):
         self.calculate_button = btn.Button(text='Рассчитать',
                                            size_hint=(.25, .10),
                                            font_size=self.autosize_font(0.038),
-                                           pos_hint={'x': .0, 'y': .0},
+                                           pos_hint={'x': .0, 'y': .30},
                                            on_press=lambda f: self.calculate())
         self.clear_button = btn.Button(text='Очистить все',
                                        font_size=self.autosize_font(0.038),
                                        size_hint=(.25, .10),
-                                       pos_hint={'x': .25, 'y': .0},
+                                       pos_hint={'x': .0, 'y': .10},
                                        on_press=lambda f: self.clean_all())
         self.exit_button = btn.Button(text='Выход',
                                       size_hint=(.25, .10),
                                       font_size=self.autosize_font(0.038),
-                                      pos_hint={'x': .75, 'y': .0},
+                                      pos_hint={'x': .0, 'y': .0},
                                       on_press=lambda f: sys.exit())
 
         # Всплывающее окно, взывающее пользователя проявить терпение.
