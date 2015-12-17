@@ -146,7 +146,8 @@ class NeuralNetworkApp(app.App):
         self.view.open()
 
     def build(self):
-        
+        from kivy.core.window import Window
+        Window.clearcolor = (.5, .5, .5, 1)
 
         self.neuron = neural.train(image.create_target())
 
